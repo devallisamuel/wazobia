@@ -1,12 +1,15 @@
 import React from 'react';
-// import logo from './logo.svg';
+import { Routes,Route } from 'react-router-dom';
+
+import { Login } from './components/pages/login';
+
 import './App.css';
 
 function App() {
   return (
-    <div>
-      hi
-    </div>
+    <Routes>
+      <Route path = "/" element = {<Login/>}/>
+    </Routes>
   );
 }
 
