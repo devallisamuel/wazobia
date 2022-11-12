@@ -18,15 +18,15 @@ export const Login = () => {
     // });
 
     return (
-      <div className="">
-        <div className="mx-auto bg-white rounded-md my-[5rem] text-center max-w-[30rem] w-[50%] p-2">
+      <div className="w-screen h-screen flex items-center justify-center">
+        <div className="bg-white rounded-md my-[5rem] text-center min-w-[20rem] max-w-[30rem] w-[50%] p-2">
           <h1 className="text-center text-lg md:text-4xl font-bold font-sans mb-3">
             Login
           </h1>
           <p className="inline text-center mt-5">
             If you have no account,
             <span
-              className="text-blue-400 inline cursor font-medium"
+              className="text-blue-400 inline cursor font-medium ml-2"
               onClick={() => {
                 navigate("/sign-up");
               }}
@@ -66,18 +66,18 @@ export const Login = () => {
                   </label>
                 </div>
 
-                <div className = "border-slate-300 border-2 flex px-2 rounded-md">
+                <div className="border-slate-300 border-2 flex px-2 rounded-md">
                   <Field
                     type="password"
                     name="password"
                     className="w-full h-10 indent-2 focus:outline-0"
                     placeholder="Type Password Here"
                   />
-                  <img src={Eye} alt = "icon" className="order-2" />
+                  <img src={Eye} alt="icon" className="order-2" />
                 </div>
                 <button
                   type="submit"
-                  className="bg-slate-400 w-full text-white rounded-md h-10 mt-2"
+                  className="bg-slate-400 w-full text-white rounded-md h-10 mt-3"
                 >
                   Log In
                 </button>

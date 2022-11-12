@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -8,15 +8,59 @@ import ticked from "../../../assets/ticked.svg";
 import unticked from "../../../assets/unticked.svg";
 
 export const SignUp = () => {
-  const [isTicked, setIsTicked] = useState<boolean>(false);
+  const [isTicked, setIsTicked] = useState<{[key:number]: boolean}>({0:false,1:false,2:false,3:false});
+  const[password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  const reg_num = /\d+/g;
+  const reg_upper = /[A-Z]/;
+  const special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+// useEffect(() => {},[isTicked]);
+    const texts: string[] = [
+      "contains at least one uppercase letter",
+      "contains eight characters",
+      "contains at least one number",
+      "contains at least one symbol",
+    ];
 
 //  const EmailSchema = Yup.object().shape({
 //         email: Yup.string()
 //           .email("Invalid email")
 //           .required("Wrong Email format"),
 //       });
+
+const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    setPassword(e.target.value);
+    let string = e.target.value;
+    if(string.includes(" ")) return;
+
+    if(string.match(reg_upper)) {
+        setIsTicked(prevState => ({...prevState, 0: true}));
+    } else {
+        setIsTicked(prevState => ({ ...prevState, 0: false }));
+    }
+
+    if(string.length >= 8) {
+        setIsTicked(prevState => ({...prevState, 1: true}));
+    } else {
+        setIsTicked(prevState => ({ ...prevState, 1: false }));
+    }
+
+    if(string.match(reg_num)) {
+        setIsTicked(prevState => ({...prevState, 2: true}));
+    } else {
+        setIsTicked(prevState => ({ ...prevState, 2: false }));
+    }
+
+    if(special.test(string)) {
+        setIsTicked(prevState => ({...prevState, 3: true}));
+    } else {
+        setIsTicked(prevState => ({ ...prevState, 3: false }));
+    }
+
+}
 
  const FormSchema = Yup.object().shape({
         name: Yup.string().required("Name can't be empty"),
@@ -26,17 +70,16 @@ export const SignUp = () => {
           .required("Wrong Email format"),
       });
 
-  const texts: string[] = ["contains at least one uppercase letter", "contains eight characters", "contains at least one number", "contains at least one symbol"];
   return (
-    <div className="">
-      <div className="mx-auto bg-white rounded-md my-[5rem] text-center max-w-[30rem] w-[50%] p-2">
+    <div className="w-screen h-screen flex items-center justify-center">
+      <div className=" bg-white rounded-md my-[5rem] text-center min-w-[20rem] max-w-[30rem] w-[50%] p-2">
         <h1 className="text-center text-lg md:text-4xl font-bold font-sans mb-3">
           Create an Account
         </h1>
         <p className="inline text-center mt-5">
           Already have an account?
           <span
-            className="text-blue-400 inline cursor font-medium"
+            className="text-blue-400 inline cursor font-medium ml-2"
             onClick={() => {
               navigate("/");
             }}
@@ -122,9 +165,11 @@ export const SignUp = () => {
               <div className="border-slate-300 border-2 flex px-2 rounded-md">
                 <Field
                   type="password"
-                  name="password"
+                //   name="password"
+                value = {password}
                   className="w-full h-10 indent-2 focus:outline-0"
                   placeholder="Type Password Here"
+                  onChange = {handlePasswordChange}
                 />
                 <img src={Eye} alt="icon" className="order-2" />
               </div>
@@ -140,8 +185,8 @@ export const SignUp = () => {
 
         <div>
             {texts.map((text,index) => (
-            <div className="flex gap-2" key = {index}>
-                <img src = {isTicked ? ticked: unticked} alt = {text} /><span className="text-sm">{text}</span>
+            <div className="flex items-center gap-2" key = {index}>
+                <img src = {isTicked[index] === true ? ticked: unticked} alt = {text} /><span className="text-sm">{text}</span>
             </div>
             ))}
         </div>
