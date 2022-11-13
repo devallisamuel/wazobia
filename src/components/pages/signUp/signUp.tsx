@@ -47,7 +47,7 @@ export const SignUp = () => {
                   password: password,
                 };
                 const user = await signUpUser(payload);
-                if(user?.status == 400) return;
+                if (!(user?.user?.first_name)) return;
                 localStorage.setItem("user", JSON.stringify(user));
                 dispatch({
                     type:SIGN_IN,
