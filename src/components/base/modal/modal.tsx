@@ -7,12 +7,20 @@ import { Imodals } from "utility/utility";
 
 
 export const Modals = (props: any | Imodals) => {
-   const{name,note,setOpen} = props;
+   const { name, note, setopen:setOpen } = props;
 
    const FormSchema = Yup.object().shape({
      name: Yup.string().required("Name can't be empty"),
      note: Yup.string().required("Note can't be empty"),
    });
+
+   function handleSubmit (values:any, actions:any) {
+    if(props?.update)  {
+
+    } else {
+
+    }
+   }
 
   return (
       <Modal
@@ -33,7 +41,7 @@ export const Modals = (props: any | Imodals) => {
                 name: name.length > 0 ? name : "",
                 note: note.length > 0 ? note : "",
               }}
-              onSubmit={() => {}}
+              onSubmit={handleSubmit}
               validationSchema={FormSchema}
               enableReinitialize={true}
             >

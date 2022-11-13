@@ -1,10 +1,16 @@
+import { useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+import { login } from "services/services";
+import { SIGN_IN } from "utility/actions/action";
+import { reducer } from "utility/reducer/reducer";
+
 import Eye from "../../../assets/eye.svg";
 
 export const Login = () => {
+    const [state, dispatch] = useReducer(reducer, { user: {}, items: [] });
     const navigate = useNavigate();
 
     const EmailSchema = Yup.object().shape({
@@ -16,6 +22,27 @@ export const Login = () => {
     // const PasswordSchema = Yup.object().shape({
     //   password: Yup.string().required("Password can't be empty"),
     // });
+
+        const handleFormSubmit = async (
+          values: { [key: string]: string },
+          actions: any
+        ) => {
+          try {
+              const user = await login({email:values.email,password:values.password});
+              if (!(user?.user?.first_name)) return;
+              localStorage.setItem(
+                "user",
+                JSON.stringify(user)
+              );
+              dispatch({
+                type: SIGN_IN,
+                payload: user,
+              });
+              navigate("/dashboard");
+          } catch (error) {
+            console.log(error);
+          }
+        };
 
     return (
       <div className="w-screen h-screen flex items-center justify-center">
@@ -39,7 +66,7 @@ export const Login = () => {
               email: "",
               password: "",
             }}
-            onSubmit={() => {}}
+            onSubmit={handleFormSubmit}
             validationSchema={EmailSchema}
           >
             {(props) => (

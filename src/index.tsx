@@ -7,13 +7,17 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import { StateProvider } from 'hooks/context/context';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <BrowserRouter>
+    <StateProvider>
       <App />
+    </StateProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState,useEffect } from "react";
+import { ChangeEvent, useState,useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -7,17 +7,23 @@ import Eye from "../../../assets/eye.svg";
 import ticked from "../../../assets/ticked.svg";
 import unticked from "../../../assets/unticked.svg";
 
+import { signUpUser } from "services/services";
+import { SIGN_IN } from "utility/actions/action";
+import { reducer } from "utility/reducer/reducer";
+
 export const SignUp = () => {
   const [isTicked, setIsTicked] = useState<{[key:number]: boolean}>({0:false,1:false,2:false,3:false});
+      const [state, dispatch] = useReducer(reducer, { user: {}, items: [] });
   const[password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+//   const {context} = useCustomContext();
 
   const reg_num = /\d+/g;
   const reg_upper = /[A-Z]/;
   const special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-// useEffect(() => {},[isTicked]);
     const texts: string[] = [
       "contains at least one uppercase letter",
       "contains eight characters",
@@ -31,36 +37,59 @@ export const SignUp = () => {
 //           .required("Wrong Email format"),
 //       });
 
-const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    setPassword(e.target.value);
-    let string = e.target.value;
-    if(string.includes(" ")) return;
-
-    if(string.match(reg_upper)) {
-        setIsTicked(prevState => ({...prevState, 0: true}));
-    } else {
-        setIsTicked(prevState => ({ ...prevState, 0: false }));
+    const handleSubmitForm = async (values:{[key:string]:string},actions:any) => {
+        try {            
+            if(Object.values(isTicked).every(value => value === true)) {
+                const payload = {
+                  first_name: values.name,
+                  last_name: values.lastName,
+                  email: values.email,
+                  password: password,
+                };
+                const user = await signUpUser(payload);
+                if(user?.status == 400) return;
+                localStorage.setItem("user", JSON.stringify(user));
+                dispatch({
+                    type:SIGN_IN,
+                    payload:user
+                });
+                navigate("/dashboard");
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    if(string.length >= 8) {
-        setIsTicked(prevState => ({...prevState, 1: true}));
-    } else {
-        setIsTicked(prevState => ({ ...prevState, 1: false }));
-    }
+    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+        setPassword(e.target.value);
+        let string = e.target.value;
+        if(string.includes(" ")) return;
 
-    if(string.match(reg_num)) {
-        setIsTicked(prevState => ({...prevState, 2: true}));
-    } else {
-        setIsTicked(prevState => ({ ...prevState, 2: false }));
-    }
+        if(string.match(reg_upper)) {
+            setIsTicked(prevState => ({...prevState, 0: true}));
+        } else {
+            setIsTicked(prevState => ({ ...prevState, 0: false }));
+        }
 
-    if(special.test(string)) {
-        setIsTicked(prevState => ({...prevState, 3: true}));
-    } else {
-        setIsTicked(prevState => ({ ...prevState, 3: false }));
-    }
+        if(string.length >= 8) {
+            setIsTicked(prevState => ({...prevState, 1: true}));
+        } else {
+            setIsTicked(prevState => ({ ...prevState, 1: false }));
+        }
 
-}
+        if(string.match(reg_num)) {
+            setIsTicked(prevState => ({...prevState, 2: true}));
+        } else {
+            setIsTicked(prevState => ({ ...prevState, 2: false }));
+        }
+
+        if(special.test(string)) {
+            setIsTicked(prevState => ({...prevState, 3: true}));
+        } else {
+            setIsTicked(prevState => ({ ...prevState, 3: false }));
+        }
+
+    }
 
  const FormSchema = Yup.object().shape({
         name: Yup.string().required("Name can't be empty"),
@@ -94,7 +123,7 @@ const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>, index: number) =
             lastName: "",
             email: "",
           }}
-          onSubmit={() => {}}
+          onSubmit={handleSubmitForm}
           validationSchema={FormSchema}
         >
           {(props) => (
