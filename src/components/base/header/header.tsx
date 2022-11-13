@@ -6,6 +6,7 @@ export const Header = () => {
 
     function handleClick () {
         const user = parseUser(localStorage.getItem("user"));
+        navigate("/verify");
     }
     return (
       <>
