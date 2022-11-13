@@ -29,7 +29,7 @@ export const Verify = () => {
             src={back}
             alt="go to dashboard"
             className="inline"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
           />
         </p>
       </div>
