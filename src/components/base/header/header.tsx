@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { parseUser } from "services/services";
+import { verifyToken } from "services/services";
 
 export const Header = () => {
     const navigate = useNavigate();
 
     function handleClick () {
         const user = parseUser(localStorage.getItem("user"));
+        verifyToken(user?.user?.email_verification_token);
         navigate("/verify");
     }
     return (
